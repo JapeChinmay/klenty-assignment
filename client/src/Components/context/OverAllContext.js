@@ -8,22 +8,16 @@ const OverAllContext = createContext();
 export const OverAllContextProvider = ({ children }) => {
   const [Incomes, setIncomes] = useState([]);
   const [Expenses, setExpenses] = useState([]);
-
-  //////////////////////////////////////////////////
   const [error, setError] = useState(null);
 
-  ///////////////post add ///////////////////////////////////
-
   const AddToDataBase = async (Income) => {
-    const res = await axios
-      .post(`${BASE_URL}add-income-data`, Income)
-      .catch((err) => {
-        setError(err.response.data.message);
-      });
-
-    getIncome();
-
-    console.log("from context, added income");
+    try {
+      const res = await axios.post(`${BASE_URL}add-income-data`, Income);
+      getIncome();
+      console.log("from context, added income");
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   const getIncome = async () => {
@@ -33,12 +27,18 @@ export const OverAllContextProvider = ({ children }) => {
       console.log(response.data);
     } catch (error) {
       console.error(error);
+      setError(error.response.data.message);
     }
   };
 
   const deleteIncome = async (id) => {
-    const res = await axios.delete(`${BASE_URL}delete-income/${id}`);
-    getIncome();
+    try {
+      const res = await axios.delete(`${BASE_URL}delete-income/${id}`);
+      getIncome();
+    } catch (error) {
+      console.error(error);
+      setError(error.response.data.message);
+    }
   };
 
   const totalIncome = () => {
@@ -50,26 +50,35 @@ export const OverAllContextProvider = ({ children }) => {
     return totalIncome;
   };
 
-  ///////////////////////////////////////////////////
-
   const addExpense = async (income) => {
-    const response = await axios
-      .post(`${BASE_URL}add-expense`, income)
-      .catch((err) => {
-        setError(err.response.data.message);
-      });
-    getExpenses();
+    try {
+      const response = await axios.post(`${BASE_URL}add-expense`, income);
+      getExpenses();
+    } catch (error) {
+      console.error(error);
+      setError(error.response.data.message);
+    }
   };
 
   const getExpenses = async () => {
-    const response = await axios.get(`${BASE_URL}get-expense-data`);
-    setExpenses(response.data);
-    console.log(response.data);
+    try {
+      const response = await axios.get(`${BASE_URL}get-expense-data`);
+      setExpenses(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+      setError(error.response.data.message);
+    }
   };
 
   const deleteExpense = async (id) => {
-    const res = await axios.delete(`${BASE_URL}delete-expense/${id}`);
-    getExpenses();
+    try {
+      const res = await axios.delete(`${BASE_URL}delete-expense/${id}`);
+      getExpenses();
+    } catch (error) {
+      console.error(error);
+      setError(error.response.data.message);
+    }
   };
 
   const totalExpenses = () => {
@@ -94,6 +103,7 @@ export const OverAllContextProvider = ({ children }) => {
         deleteExpense,
         getExpenses,
         Expenses,
+        error,
       }}
     >
       {children}
