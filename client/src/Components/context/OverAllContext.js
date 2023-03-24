@@ -27,10 +27,13 @@ export const OverAllContextProvider = ({ children }) => {
   };
 
   const getIncome = async () => {
-    const response = await axios.get(`${BASE_URL}get-income-data`);
-
-    setIncomes(response.data);
-    console.log(response.data);
+    try {
+      const response = await axios.get(`${BASE_URL}get-income-data`);
+      setIncomes(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const deleteIncome = async (id) => {
